@@ -1,18 +1,23 @@
 import TodoItem from './TodoItem';
+import { Todo } from '@/types/todo';
 
-const mockTodos = [
-    { id: 1, title: "Learn Next.js", completed: false },
-    { id: 2, title: "Write documentation", completed: true },
-    { id: 3, title: "Build a project", completed: false },
-  ];
+interface TodoListProps {
+    todos: Todo[];
+    toggleTodo: (id: number) => void;
+    deleteTodo: (id: number) => void;
+    updateTodo: (id: number, title: string) => void;
+}
 
-export default function TodoList() {
+export default function TodoList({ todos, toggleTodo, deleteTodo, updateTodo }: TodoListProps) {
   return (
     <ul className="space-y-2">
-      {mockTodos.map((todo) => (
+      {todos.map((todo) => (
         <TodoItem
           key={todo.id}
           todo={todo}
+          toggleTodo={toggleTodo}
+          deleteTodo={deleteTodo}
+          updateTodo={updateTodo}
         />
       ))}
     </ul>
