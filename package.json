@@ -3,19 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "nodemon --exec tsx server.ts",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "immer": "^10.1.1",
     "next": "14.2.23",
     "react": "^18",
     "react-dom": "^18",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.3",
+    "cross-env": "^7.0.3",
+    "@prisma/client": "^6.2.1",
+    "prisma": "^6.2.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "nodemon": "^3.1.9",
+    "tsx": "^4.19.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
