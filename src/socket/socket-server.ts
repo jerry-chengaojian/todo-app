@@ -1,6 +1,6 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
-import { createTodoHandlers } from './todoHandlers';
+import { createTodoHandlers } from './todo-handlers';
 
 export function initializeSocketServer(httpServer: HTTPServer) {
   const io = new SocketIOServer(httpServer);

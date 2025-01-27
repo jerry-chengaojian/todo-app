@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { produce } from 'immer';
 import { Todo } from "@prisma/client";
-import socket from "@/socket/client/socketClient";
+import socket from "@/lib/socket-client";
 
 interface TodoStore {
   todos: Todo[];
@@ -11,11 +11,72 @@ interface TodoStore {
   updateTodo: (id: number, title: string) => void;
   toggleAll: (completed: boolean) => void;
   clearCompleted: () => void;
+  bindEvents: () => () => void;
 }
 
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
   
+  bindEvents: () => {
+
+    socket.onAny((...args) => {
+      console.log("incoming", args);
+    });
+    
+    socket.onAnyOutgoing((...args) => {
+      console.log("outgoing", args);
+    });
+
+    socket.connect();
+
+    const fetchTodos = () => {
+      socket.emit('todo:list', (res: { data?: Todo[] }) => {
+        if (res.data) {
+          set({ todos: res.data });
+        }
+      });
+    };
+
+    socket.on('connect', () => {
+      console.log('socket connected');
+      fetchTodos();
+      console.log(socket.id);
+    });
+
+    socket.on('todo:created', (todo: Todo) => {
+      set(produce((state: TodoStore) => {
+        state.todos.push(todo);
+      }));
+    });
+
+    socket.on('todo:updated', (updatedTodo: Todo) => {
+      set(produce((state: TodoStore) => {
+        const todo = state.todos.find(t => t.id === updatedTodo.id);
+        if (todo) {
+          Object.assign(todo, updatedTodo);
+        }
+      }));
+    });
+
+    socket.on('todo:deleted', (id: number) => {
+      set(produce((state: TodoStore) => {
+        const index = state.todos.findIndex(t => t.id === id);
+        if (index !== -1) {
+          state.todos.splice(index, 1);
+        }
+      }));
+    });
+
+    // 清理函数
+    return () => {
+      socket.off('connect');
+      socket.off('todo:created');
+      socket.off('todo:updated');
+      socket.off('todo:deleted');
+      socket.disconnect();
+    };
+  },
+
   addTodo: (title) => set(
     produce((state: TodoStore) => {
       const tempId = Date.now();
@@ -97,37 +158,4 @@ export const useTodoStore = create<TodoStore>((set) => ({
       state.todos = state.todos.filter(todo => !todo.completed);
     })
   )
-}));
-
-// 设置 Socket.IO 事件监听
-socket.on('connect', () => {
-  socket.emit('todo:list', (res: { data?: Todo[] }) => {
-    if (res.data) {
-      useTodoStore.setState({ todos: res.data });
-    }
-  });
-});
-
-socket.on('todo:created', (todo: Todo) => {
-  useTodoStore.setState(produce((state: TodoStore) => {
-    state.todos.push(todo);
-  }));
-});
-
-socket.on('todo:updated', (updatedTodo: Todo) => {
-  useTodoStore.setState(produce((state: TodoStore) => {
-    const todo = state.todos.find(t => t.id === updatedTodo.id);
-    if (todo) {
-      Object.assign(todo, updatedTodo);
-    }
-  }));
-});
-
-socket.on('todo:deleted', (id: number) => {
-  useTodoStore.setState(produce((state: TodoStore) => {
-    const index = state.todos.findIndex(t => t.id === id);
-    if (index !== -1) {
-      state.todos.splice(index, 1);
-    }
-  }));
-}); 
+})); 

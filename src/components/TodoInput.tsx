@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTodoStore } from '@/store/useTodoStore';
+import { useTodoStore } from '@/stores/todo';
 
 export default function TodoInput() {
   const [todo, setTodo] = useState('');
