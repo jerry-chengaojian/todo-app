@@ -1,6 +1,5 @@
-import { Todo } from '@/types/todo';
 import { useTodoStore } from '@/store/useTodoStore';
-
+import { Todo } from '@prisma/client';
 interface TodoItemProps {
   todo: Todo;
 }
