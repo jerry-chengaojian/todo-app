@@ -1,24 +1,13 @@
 import TodoItem from './TodoItem';
-import { Todo } from '@/types/todo';
+import { useTodoStore } from '@/store/useTodoStore';
 
-interface TodoListProps {
-    todos: Todo[];
-    toggleTodo: (id: number) => void;
-    deleteTodo: (id: number) => void;
-    updateTodo: (id: number, title: string) => void;
-}
-
-export default function TodoList({ todos, toggleTodo, deleteTodo, updateTodo }: TodoListProps) {
+export default function TodoList() {
+  const todos = useTodoStore((state) => state.todos);
+  
   return (
     <ul className="space-y-2">
       {todos.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          toggleTodo={toggleTodo}
-          deleteTodo={deleteTodo}
-          updateTodo={updateTodo}
-        />
+        <TodoItem key={todo.id} todo={todo} />
       ))}
     </ul>
   );
