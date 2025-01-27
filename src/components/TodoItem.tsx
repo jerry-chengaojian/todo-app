@@ -1,4 +1,4 @@
-import { useTodoStore } from '@/store/useTodoStore';
+import { useTodoStore } from '@/stores/todo';
 import { Todo } from '@prisma/client';
 interface TodoItemProps {
   todo: Todo;

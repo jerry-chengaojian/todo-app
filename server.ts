@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import next from "next";
-import { initializeSocketServer } from "./src/socket/server/socketServer";
+import { initializeSocketServer } from "./src/socket/socket-server";
 
 const port = parseInt(process.env.PORT || "3000", 10);
 const hostname = "localhost";

@@ -1,4 +1,4 @@
-import { useTodoStore } from '@/store/useTodoStore';
+import { useTodoStore } from '@/stores/todo';
 
 export default function TodoFooter() {
   const todos = useTodoStore((state) => state.todos);
