@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { produce } from 'immer';
 import { Todo } from '@/types/todo';
 
 interface TodoStore {
@@ -14,31 +15,50 @@ interface TodoStore {
 export const useTodoStore = create<TodoStore>((set) => ({
   todos: [],
   
-  addTodo: (title) => set((state) => ({
-    todos: [...state.todos, { id: Date.now(), title, completed: false }]
-  })),
+  addTodo: (title) => set(
+    produce((state: TodoStore) => {
+      state.todos.push({ id: Date.now(), title, completed: false });
+    })
+  ),
   
-  toggleTodo: (id) => set((state) => ({
-    todos: state.todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    )
-  })),
+  toggleTodo: (id) => set(
+    produce((state: TodoStore) => {
+      const todo = state.todos.find(todo => todo.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+      }
+    })
+  ),
   
-  deleteTodo: (id) => set((state) => ({
-    todos: state.todos.filter(todo => todo.id !== id)
-  })),
+  deleteTodo: (id) => set(
+    produce((state: TodoStore) => {
+      const index = state.todos.findIndex(todo => todo.id === id);
+      if (index !== -1) {
+        state.todos.splice(index, 1);
+      }
+    })
+  ),
   
-  updateTodo: (id, title) => set((state) => ({
-    todos: state.todos.map(todo =>
-      todo.id === id ? { ...todo, title } : todo
-    )
-  })),
+  updateTodo: (id, title) => set(
+    produce((state: TodoStore) => {
+      const todo = state.todos.find(todo => todo.id === id);
+      if (todo) {
+        todo.title = title;
+      }
+    })
+  ),
   
-  toggleAll: (completed) => set((state) => ({
-    todos: state.todos.map(todo => ({ ...todo, completed }))
-  })),
+  toggleAll: (completed) => set(
+    produce((state: TodoStore) => {
+      state.todos.forEach(todo => {
+        todo.completed = completed;
+      });
+    })
+  ),
   
-  clearCompleted: () => set((state) => ({
-    todos: state.todos.filter(todo => !todo.completed)
-  }))
+  clearCompleted: () => set(
+    produce((state: TodoStore) => {
+      state.todos = state.todos.filter(todo => !todo.completed);
+    })
+  )
 })); 
