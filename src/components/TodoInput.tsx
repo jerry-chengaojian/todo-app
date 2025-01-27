@@ -1,20 +1,17 @@
 import { useState } from "react";
+import { useTodoStore } from '@/store/useTodoStore';
 
-interface TodoInputProps {
-  addTodo: (title: string) => void;
-}
+export default function TodoInput() {
+  const [todo, setTodo] = useState('');
+  const addTodo = useTodoStore((state) => state.addTodo);
 
-export default function TodoInput({ addTodo }: TodoInputProps) {
-
-    const [todo, setTodo] = useState('');
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (todo.trim()) {
-            addTodo(todo.trim());
-            setTodo('');
-        }
-    };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (todo.trim()) {
+      addTodo(todo.trim());
+      setTodo('');
+    }
+  };
 
   return (
     <form className="mb-6" onSubmit={handleSubmit}>

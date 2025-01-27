@@ -1,13 +1,13 @@
 import { Todo } from '@/types/todo';
+import { useTodoStore } from '@/store/useTodoStore';
 
 interface TodoItemProps {
   todo: Todo;
-  toggleTodo: (id: number) => void;
-  deleteTodo: (id: number) => void;
-  updateTodo: (id: number, title: string) => void;
 }
 
-export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: TodoItemProps) {
+export default function TodoItem({ todo }: TodoItemProps) {
+  const { toggleTodo, deleteTodo, updateTodo } = useTodoStore();
+  
   return (
     <li className="flex items-center gap-3 p-3 border rounded-lg">
       <input
