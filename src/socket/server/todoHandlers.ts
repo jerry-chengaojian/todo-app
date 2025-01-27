@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "../../lib/prisma";
 import { Socket } from "socket.io";
 import { Todo } from "@prisma/client";
 
