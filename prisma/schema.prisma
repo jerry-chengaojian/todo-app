@@ -13,3 +13,12 @@ model Comment {
   createdAt DateTime @default(now())
   author    String   @default("Anonymous")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
